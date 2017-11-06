@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import JsonResponse
 from django.shortcuts import render
-from django.views.generic import ListView
+from django.views.generic import ListView, View
 
 from .models import Student
 
@@ -40,3 +41,45 @@ class StudentListView(ListView):
         current_page = ctx.pop('page_obj', None)
         ctx['current_page'] = current_page
         return ctx
+
+
+def studentsjson(request):
+    students = Student.objects.values('id', 'first_name', 'last_name', 'gender', 'dob')
+    paginator = Paginator(students, 100, orphans=5)  # Show 100 students per page
+
+    page = request.GET.get('page')
+    try:
+        current_page = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        current_page = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        current_page = paginator.page(paginator.num_pages)
+
+    context = {
+        'students': list(current_page)
+    }
+    return JsonResponse(context)
+
+
+class StudentJsonView(View):
+
+    def get(self, *args, **kwargs):
+        students = Student.objects.values('id', 'first_name', 'last_name', 'gender', 'dob')
+        paginator = Paginator(students, 100, orphans=5)  # Show 100 students per page
+
+        page = self.request.GET.get('page')
+        try:
+            current_page = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            current_page = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range, deliver last page of results.
+            current_page = paginator.page(paginator.num_pages)
+
+        context = {
+            'students': list(current_page)
+        }
+        return JsonResponse(context)

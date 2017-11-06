@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for student in  current_page %}
+                {% for student in current_page %}
                 <tr>
                     <td>{{ current_page.start_index|add:forloop.counter0 }}</td>
                     <td>{{ student.full_name  }}</td>
