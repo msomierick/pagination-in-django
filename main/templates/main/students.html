@@ -26,7 +26,7 @@
             </tbody>
         </table>
         {% if is_paginated %}
-        <nav>
+        <nav class="my-5">
             <ul class="pagination">
                 {% if current_page.has_previous %}
                     <li class="page-item"><a class="page-link" href="?page={{ current_page.previous_page_number }}">Previous</a></li>
@@ -42,5 +42,4 @@
             </ul>
         </nav>
         {% endif %}
-
 {% endblock content %}
